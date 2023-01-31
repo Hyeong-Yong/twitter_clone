@@ -2,7 +2,7 @@ import 'package:appwrite/appwrite.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:twitter_clone/constants/constants.dart';
 
-final appwriteClientProvider = Provider((ref) {
+final appwriteClientProvider = Provider<Client>((ref) {
   Client client = Client();
 
   return client
@@ -11,7 +11,12 @@ final appwriteClientProvider = Provider((ref) {
       .setSelfSigned(status: true);
 });
 
-final appwriteAccountProivder = Provider((ref) {
+final appwriteAccountProivder = Provider<Account>((ref) {
   final client = ref.watch(appwriteClientProvider);
   return Account(client);
+});
+
+final appwriteDatabaseProvider = Provider<Databases>((ref) {
+  final client = ref.watch(appwriteClientProvider);
+  return Databases(client);
 });
