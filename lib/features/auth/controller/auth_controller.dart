@@ -4,9 +4,9 @@ import 'package:appwrite/models.dart' as model;
 import 'package:twitter_clone/api/api.dart';
 
 import 'package:twitter_clone/core/core.dart';
+import 'package:twitter_clone/features/auth/models/user_model.dart';
 import 'package:twitter_clone/features/auth/view/login_view.dart';
 import 'package:twitter_clone/features/home/view/home_view.dart';
-import 'package:twitter_clone/models/user_model.dart';
 
 // <StateNotifier, state>
 final authControllerProvider =
@@ -17,28 +17,27 @@ final authControllerProvider =
   );
 });
 
-final currentUserDetailProvider = FutureProvider<UserModel?>((ref) async {
-  /// If a consumer of an [AsyncValue] does not care about the loading/error
-  /// state, consider using [value] to read the state:
-  final currentUser = ref.watch(currentUserAccountProvider);
-  final userDetails = ref.watch(
-    userDetailsProvider(
-      currentUser.value!.$id,
-      // TODO: value 대신 예외처리 해주기
-    ),
-  );
-  return userDetails.value;
-});
-
-final userDetailsProvider =
-    FutureProvider.family<UserModel, String>((ref, String uid) {
+final userDetailsProvider = FutureProvider.family((ref, String uid) {
   final authController = ref.watch(authControllerProvider.notifier);
   return authController.getUserData(uid);
 });
 
-final currentUserAccountProvider = FutureProvider<model.Account?>((ref) async {
+final currentUserAccountProvider = FutureProvider((ref) async {
   final authController = ref.watch(authControllerProvider.notifier);
   return authController.currentUser();
+});
+
+final currentUserDetailProvider = FutureProvider((ref) async {
+  /// If a consumer of an [AsyncValue] does not care about the loading/error
+  /// state, consider using [value] to read the state:
+  final currentUserId = ref.watch(currentUserAccountProvider).value!.$id;
+  final userDetails = ref.watch(
+    userDetailsProvider(
+      currentUserId,
+      // TODO: value 대신 예외처리 해주기
+    ),
+  );
+  return userDetails.value;
 });
 
 class AuthController extends StateNotifier<IsLoading> {

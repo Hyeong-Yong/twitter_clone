@@ -43,7 +43,7 @@ class _LoginViewState extends ConsumerState<LoginView> {
 
   @override
   Widget build(BuildContext context) {
-    // == ref.watch(authControllerProvider).state
+    // == ref.watch(authControllerProvider.notifier).state
     final isLoading = ref.watch(authControllerProvider);
 
     return Scaffold(
